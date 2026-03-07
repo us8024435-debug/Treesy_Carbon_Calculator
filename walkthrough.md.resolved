@@ -1,0 +1,48 @@
+# Treesy Travel CO₂ Offset Calculator — Walkthrough
+
+## What Was Built
+
+A client-side web calculator for travel agencies to estimate CO₂ emissions and offset them with Treesy trees. No backend, no API — just open [index.html](file:///d:/TREESY/index.html) in any browser.
+
+### File Structure
+
+| File | Purpose |
+|------|---------|
+| [index.html](file:///d:/TREESY/index.html) | HTML shell — page structure & layout |
+| [styles.css](file:///d:/TREESY/styles.css) | All styling — dark glassmorphism, responsive |
+| [app.js](file:///d:/TREESY/app.js) | All logic — cities, emissions, offset slider |
+
+### Key Features
+- **80+ cities** with coordinates for Haversine distance calculation
+- **5 transport modes**: Flight, Bus, Car, Train, Ferry
+- **Hotel stays**: 30.9 kg CO₂/night
+- **Real-time recalculation** on every input change
+- **Offset slider**: 0–200% + custom exact input
+- **"Copy Summary"** button for emailing quotes to clients
+- **Methodology footnotes** (DEFRA, EEA sources)
+
+---
+
+## Verification
+
+### Charlie's Example Trip
+
+| Segment | Mode | Distance | CO₂ |
+|---------|------|----------|-----|
+| Copenhagen → Nairobi | ✈️ Flight | 6,409 km | 1,376 kg |
+| Nairobi → Kilimanjaro | ✈️ Flight | 239 km | 129 kg |
+| Kilimanjaro → Dar es Salaam | 🚌 Bus | 442 km | 163 kg |
+| Dar es Salaam → Copenhagen | ✈️ Flight | 7,366 km | 1,580 kg |
+| + 10 hotel nights | 🏨 | — | 309 kg |
+| **Total** | | | **3,558 kg CO₂** |
+
+At **100% offset** → **36 trees**
+At **150% offset** → **54 trees** (Carbon Positive 🌟)
+
+### Screenshot
+
+![Calculator showing 3,558 kg CO₂ total with offset slider](C:/Users/ASUS/.gemini/antigravity/brain/8cd123d6-5aff-4941-8e23-bcac2d412ba7/calculator_screenshot.png)
+
+### Demo Recording
+
+![Full browser test — adding segments, adjusting offset slider](C:/Users/ASUS/.gemini/antigravity/brain/8cd123d6-5aff-4941-8e23-bcac2d412ba7/demo_recording.webp)

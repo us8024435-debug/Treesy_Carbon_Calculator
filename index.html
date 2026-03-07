@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Treesy — Travel CO₂ Offset Calculator</title>
+<meta name="description" content="Calculate your trip's carbon footprint and offset it with Treesy trees. A simple tool for travel agencies.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+<!-- ═══ LIGHT PILLAR BACKGROUND ═══ -->
+<div class="light-pillar-wrapper">
+  <div id="light-pillar"></div>
+</div>
+
+<div class="container">
+
+  <!-- ═══ HEADER ═══ -->
+  <header class="header">
+    <div class="logo">
+      <div class="logo-icon">🌳</div>
+      <span class="logo-text">Treesy</span>
+    </div>
+    <h1>Travel CO₂ Offset Calculator</h1>
+    <p>Estimate your trip's carbon footprint and offset with trees</p>
+  </header>
+
+  <!-- ═══ JOURNEY SEGMENTS ═══ -->
+  <div class="card" id="segments-card">
+    <div class="card-title"><span class="icon">✈️</span> Journey Segments</div>
+    <div class="segments-list" id="segments-list"></div>
+    <button class="btn-add" id="btn-add-segment" onclick="addSegment()">
+      <span>＋</span> Add Segment
+    </button>
+  </div>
+
+  <!-- ═══ EMISSIONS BREAKDOWN ═══ -->
+  <div class="card" id="breakdown-card" style="display: none;">
+    <div class="card-title"><span class="icon">📊</span> Emissions Breakdown</div>
+    <table class="breakdown-table" id="breakdown-table">
+      <thead>
+        <tr>
+          <th>Segment</th>
+          <th>Type</th>
+          <th>Distance</th>
+          <th style="text-align:right">CO₂</th>
+        </tr>
+      </thead>
+      <tbody id="breakdown-body"></tbody>
+    </table>
+    <div class="breakdown-total" id="breakdown-total"></div>
+  </div>
+
+  <!-- ═══ RESULTS & OFFSET ═══ -->
+  <div class="card" id="results-card" style="display: none;">
+    <div class="card-title"><span class="icon">🌍</span> Offset Your Impact</div>
+
+    <div class="results-grid">
+      <div class="result-tile">
+        <div class="result-label">Total Emissions</div>
+        <div class="result-value" id="total-kg">0</div>
+        <div class="result-unit">kg CO₂</div>
+      </div>
+      <div class="result-tile highlight">
+        <div class="result-label">Trees to Plant</div>
+        <div class="result-value green" id="total-trees">0</div>
+        <div class="result-unit">via Treesy</div>
+        <div id="carbon-badge"></div>
+      </div>
+    </div>
+
+    <div class="trees-visual" id="trees-visual"></div>
+
+    <div class="offset-section">
+      <div class="offset-header">
+        <span class="offset-label">Offset percentage</span>
+        <span class="offset-value" id="offset-pct-display">100%</span>
+      </div>
+
+      <div class="slider-wrapper">
+        <div class="slider-track">
+          <div class="slider-fill" id="slider-fill" style="width: 50%"></div>
+        </div>
+        <input type="range" id="offset-slider" min="0" max="200" value="100"
+               oninput="onSliderChange(this.value)">
+      </div>
+
+      <div class="slider-labels">
+        <span>0%</span>
+        <span>50%</span>
+        <span>100%</span>
+        <span>150%</span>
+        <span>200%</span>
+      </div>
+
+      <div class="quick-btns">
+        <button class="quick-btn" onclick="setOffset(10)">10%</button>
+        <button class="quick-btn" onclick="setOffset(25)">25%</button>
+        <button class="quick-btn" onclick="setOffset(50)">50%</button>
+        <button class="quick-btn active" onclick="setOffset(100)">100%</button>
+        <button class="quick-btn" onclick="setOffset(150)">150%</button>
+        <button class="quick-btn" onclick="setOffset(200)">200%</button>
+      </div>
+
+      <div class="custom-pct-row">
+        <label for="custom-pct">Or enter exact %:</label>
+        <input type="number" class="custom-pct-input" id="custom-pct" min="0" max="500"
+               value="100" oninput="onCustomPctChange(this.value)">
+        <span style="font-size:13px;color:var(--text-muted)">%</span>
+      </div>
+    </div>
+
+    <div class="summary-section">
+      <button class="btn-copy" id="btn-copy" onclick="copySummary()">
+        📋 Copy Summary to Clipboard
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer class="footer">
+    <details class="methodology">
+      <summary>📐 Methodology & Sources</summary>
+      <br>
+      <strong>Transport emission factors</strong> (kg CO₂ per passenger-km):<br>
+      • Flight (short-haul &lt; 1,500 km): 0.255 — DEFRA 2023<br>
+      • Flight (long-haul ≥ 1,500 km): 0.195 — DEFRA 2023<br>
+      • Bus / Coach: 0.089 — European Environment Agency<br>
+      • Car (avg. occupancy): 0.171 — EPA / DEFRA<br>
+      • Train: 0.041 — European Environment Agency<br>
+      • Ferry: 0.019 — DEFRA 2023<br><br>
+      <strong>Hotel/accommodation</strong>: 30.9 kg CO₂ per night — Cornell Hotel Sustainability Benchmarking<br><br>
+      <strong>Tree sequestration</strong>: 1 tree ≈ 100 kg CO₂ over its lifetime — Based on average tropical tree planting sequestration estimates<br><br>
+      <strong>Distance calculation</strong>: Haversine formula using city center coordinates<br><br>
+      <em>These are approximate values for quick estimation. Actual emissions vary based on aircraft type, vehicle efficiency, occupancy, accommodation standards, and other factors.</em>
+    </details>
+    <p style="margin-top:16px;">Powered by <a href="#">Treesy</a> · Plant Trees, Offset Carbon</p>
+  </footer>
+
+</div>
+
+<script src="light-pillar.js"></script>
+<script src="app.js"></script>
+<script>
+  // Initialize Light Pillar with Treesy green colors
+  createLightPillar(document.getElementById('light-pillar'), {
+    topColor: '#29ff69',
+    bottomColor: '#9effbb',
+    intensity: 0.5,
+    rotationSpeed: 0.5,
+    glowAmount: 0.002,
+    pillarWidth: 4,
+    pillarHeight: 0.4,
+    noiseIntensity: 0.8,
+    pillarRotation: 25,
+    interactive: false,
+    mixBlendMode: 'screen',
+    quality: 'high',
+  });
+</script>
+</body>
+</html>
