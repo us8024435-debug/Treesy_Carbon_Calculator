@@ -3,105 +3,7 @@
 // ═══════════════════════════════════════════════
 
 // ─────────────────────────────────────────────
-// CITY COORDINATES DATABASE
-// ─────────────────────────────────────────────
-const CITIES = {
-  copenhagen: { lat: 55.6761, lon: 12.5683, name: "Copenhagen" },
-  nairobi: { lat: -1.2921, lon: 36.8219, name: "Nairobi" },
-  jro: { lat: -3.4294, lon: 37.0742, name: "Kilimanjaro (JRO)" },
-  kilimanjaro: { lat: -3.4294, lon: 37.0742, name: "Kilimanjaro (JRO)" },
-  "dar es salaam": { lat: -6.7924, lon: 39.2083, name: "Dar es Salaam" },
-  london: { lat: 51.5074, lon: -0.1278, name: "London" },
-  "new york": { lat: 40.7128, lon: -74.006, name: "New York" },
-  paris: { lat: 48.8566, lon: 2.3522, name: "Paris" },
-  berlin: { lat: 52.52, lon: 13.405, name: "Berlin" },
-  amsterdam: { lat: 52.3676, lon: 4.9041, name: "Amsterdam" },
-  stockholm: { lat: 59.3293, lon: 18.0686, name: "Stockholm" },
-  oslo: { lat: 59.9139, lon: 10.7522, name: "Oslo" },
-  helsinki: { lat: 60.1699, lon: 24.9384, name: "Helsinki" },
-  dubai: { lat: 25.2048, lon: 55.2708, name: "Dubai" },
-  tokyo: { lat: 35.6762, lon: 139.6503, name: "Tokyo" },
-  singapore: { lat: 1.3521, lon: 103.8198, name: "Singapore" },
-  bangkok: { lat: 13.7563, lon: 100.5018, name: "Bangkok" },
-  sydney: { lat: -33.8688, lon: 151.2093, name: "Sydney" },
-  "cape town": { lat: -33.9249, lon: 18.4241, name: "Cape Town" },
-  cairo: { lat: 30.0444, lon: 31.2357, name: "Cairo" },
-  "los angeles": { lat: 33.9425, lon: -118.4081, name: "Los Angeles" },
-  "san francisco": { lat: 37.7749, lon: -122.4194, name: "San Francisco" },
-  miami: { lat: 25.7617, lon: -80.1918, name: "Miami" },
-  toronto: { lat: 43.6532, lon: -79.3832, name: "Toronto" },
-  "mexico city": { lat: 19.4326, lon: -99.1332, name: "Mexico City" },
-  "são paulo": { lat: -23.5505, lon: -46.6333, name: "São Paulo" },
-  "sao paulo": { lat: -23.5505, lon: -46.6333, name: "São Paulo" },
-  "buenos aires": { lat: -34.6037, lon: -58.3816, name: "Buenos Aires" },
-  "rio de janeiro": { lat: -22.9068, lon: -43.1729, name: "Rio de Janeiro" },
-  lima: { lat: -12.0464, lon: -77.0428, name: "Lima" },
-  bogota: { lat: 4.711, lon: -74.0721, name: "Bogotá" },
-  rome: { lat: 41.9028, lon: 12.4964, name: "Rome" },
-  madrid: { lat: 40.4168, lon: -3.7038, name: "Madrid" },
-  lisbon: { lat: 38.7223, lon: -9.1393, name: "Lisbon" },
-  vienna: { lat: 48.2082, lon: 16.3738, name: "Vienna" },
-  prague: { lat: 50.0755, lon: 14.4378, name: "Prague" },
-  warsaw: { lat: 52.2297, lon: 21.0122, name: "Warsaw" },
-  budapest: { lat: 47.4979, lon: 19.0402, name: "Budapest" },
-  zurich: { lat: 47.3769, lon: 8.5417, name: "Zurich" },
-  munich: { lat: 48.1351, lon: 11.582, name: "Munich" },
-  barcelona: { lat: 41.3851, lon: 2.1734, name: "Barcelona" },
-  istanbul: { lat: 41.0082, lon: 28.9784, name: "Istanbul" },
-  mumbai: { lat: 19.076, lon: 72.8777, name: "Mumbai" },
-  delhi: { lat: 28.7041, lon: 77.1025, name: "Delhi" },
-  beijing: { lat: 39.9042, lon: 116.4074, name: "Beijing" },
-  shanghai: { lat: 31.2304, lon: 121.4737, name: "Shanghai" },
-  "hong kong": { lat: 22.3193, lon: 114.1694, name: "Hong Kong" },
-  seoul: { lat: 37.5665, lon: 126.978, name: "Seoul" },
-  "kuala lumpur": { lat: 3.139, lon: 101.6869, name: "Kuala Lumpur" },
-  jakarta: { lat: -6.2088, lon: 106.8456, name: "Jakarta" },
-  "addis ababa": { lat: 9.025, lon: 38.7469, name: "Addis Ababa" },
-  lagos: { lat: 6.5244, lon: 3.3792, name: "Lagos" },
-  accra: { lat: 5.6037, lon: -0.187, name: "Accra" },
-  johannesburg: { lat: -26.2041, lon: 28.0473, name: "Johannesburg" },
-  casablanca: { lat: 33.5731, lon: -7.5898, name: "Casablanca" },
-  zanzibar: { lat: -6.1659, lon: 39.1989, name: "Zanzibar" },
-  mombasa: { lat: -4.0435, lon: 39.6682, name: "Mombasa" },
-  arusha: { lat: -3.3869, lon: 36.683, name: "Arusha" },
-  athens: { lat: 37.9838, lon: 23.7275, name: "Athens" },
-  dublin: { lat: 53.3498, lon: -6.2603, name: "Dublin" },
-  brussels: { lat: 50.8503, lon: 4.3517, name: "Brussels" },
-  milan: { lat: 45.4642, lon: 9.19, name: "Milan" },
-  doha: { lat: 25.2854, lon: 51.531, name: "Doha" },
-  "abu dhabi": { lat: 24.4539, lon: 54.3773, name: "Abu Dhabi" },
-  reykjavik: { lat: 64.1466, lon: -21.9426, name: "Reykjavik" },
-  marrakech: { lat: 31.6295, lon: -7.9811, name: "Marrakech" },
-  vancouver: { lat: 49.2827, lon: -123.1207, name: "Vancouver" },
-  denver: { lat: 39.7392, lon: -104.9903, name: "Denver" },
-  chicago: { lat: 41.8781, lon: -87.6298, name: "Chicago" },
-  "washington dc": { lat: 38.9072, lon: -77.0369, name: "Washington DC" },
-  boston: { lat: 42.3601, lon: -71.0589, name: "Boston" },
-  seattle: { lat: 47.6062, lon: -122.3321, name: "Seattle" },
-  honolulu: { lat: 21.3069, lon: -157.8583, name: "Honolulu" },
-  bali: { lat: -8.3405, lon: 115.092, name: "Bali" },
-  phuket: { lat: 7.8804, lon: 98.3923, name: "Phuket" },
-  maldives: { lat: 3.2028, lon: 73.2207, name: "Maldives" },
-  cancun: { lat: 21.1619, lon: -86.8515, name: "Cancún" },
-  havana: { lat: 23.1136, lon: -82.3666, name: "Havana" },
-  moscow: { lat: 55.7558, lon: 37.6173, name: "Moscow" },
-  "st petersburg": { lat: 59.9343, lon: 30.3351, name: "St. Petersburg" },
-  kampala: { lat: 0.3476, lon: 32.5825, name: "Kampala" },
-  kigali: { lat: -1.9403, lon: 29.8739, name: "Kigali" },
-  lusaka: { lat: -15.3875, lon: 28.3228, name: "Lusaka" },
-  maputo: { lat: -25.9692, lon: 32.5732, name: "Maputo" },
-  windhoek: { lat: -22.5609, lon: 17.0658, name: "Windhoek" },
-  dakar: { lat: 14.7167, lon: -17.4677, name: "Dakar" },
-  tunis: { lat: 36.8065, lon: 10.1815, name: "Tunis" },
-  melbourne: { lat: -37.8136, lon: 144.9631, name: "Melbourne" },
-  auckland: { lat: -36.8485, lon: 174.7633, name: "Auckland" },
-  fiji: { lat: -17.7134, lon: 178.065, name: "Fiji" },
-  colombo: { lat: 6.9271, lon: 79.8612, name: "Colombo" },
-  kathmandu: { lat: 27.7172, lon: 85.324, name: "Kathmandu" },
-};
-
-// ─────────────────────────────────────────────
-// EMISSION FACTORS
+// ADMIN SETTINGS & EMISSION FACTORS
 // ─────────────────────────────────────────────
 const TRANSPORT_MODES = {
   flight: { label: "✈️  Flight", emoji: "✈️" },
@@ -111,17 +13,76 @@ const TRANSPORT_MODES = {
   ferry: { label: "⛴️  Ferry", emoji: "⛴️" },
 };
 
-const EMISSION_FACTORS = {
+const DEFAULT_CONFIG = {
   flight_short: 0.255, // < 1500 km
   flight_long: 0.195, // >= 1500 km
   bus: 0.089,
   car: 0.171,
   train: 0.041,
   ferry: 0.019,
+  hotel: 30.9,
+  tree: 100
 };
 
-const HOTEL_CO2_PER_NIGHT = 30.9; // kg CO₂
-const CO2_PER_TREE = 100; // kg CO₂ per tree
+let CONFIG = { ...DEFAULT_CONFIG };
+
+function loadConfig() {
+  const saved = localStorage.getItem('treesy_config');
+  if (saved) {
+    try {
+      CONFIG = { ...DEFAULT_CONFIG, ...JSON.parse(saved) };
+    } catch(e) {}
+  }
+}
+
+function initAdminSettings() {
+  document.getElementById('set-flight-short').value = CONFIG.flight_short;
+  document.getElementById('set-flight-long').value = CONFIG.flight_long;
+  document.getElementById('set-bus').value = CONFIG.bus;
+  document.getElementById('set-car').value = CONFIG.car;
+  document.getElementById('set-train').value = CONFIG.train;
+  document.getElementById('set-ferry').value = CONFIG.ferry;
+  document.getElementById('set-hotel').value = CONFIG.hotel;
+  document.getElementById('set-tree').value = CONFIG.tree;
+}
+
+function openSettings() {
+  initAdminSettings();
+  document.getElementById('settings-modal').style.display = 'flex';
+}
+
+function closeSettings() {
+  document.getElementById('settings-modal').style.display = 'none';
+}
+
+function saveSettings() {
+  const readNumberOrDefault = (inputId, fallback) => {
+    const raw = document.getElementById(inputId)?.value;
+    const n = parseFloat(raw);
+    return Number.isFinite(n) ? n : fallback;
+  };
+
+  // Allow valid 0 values (do not use `||`).
+  CONFIG.flight_short = readNumberOrDefault('set-flight-short', DEFAULT_CONFIG.flight_short);
+  CONFIG.flight_long = readNumberOrDefault('set-flight-long', DEFAULT_CONFIG.flight_long);
+  CONFIG.bus = readNumberOrDefault('set-bus', DEFAULT_CONFIG.bus);
+  CONFIG.car = readNumberOrDefault('set-car', DEFAULT_CONFIG.car);
+  CONFIG.train = readNumberOrDefault('set-train', DEFAULT_CONFIG.train);
+  CONFIG.ferry = readNumberOrDefault('set-ferry', DEFAULT_CONFIG.ferry);
+  CONFIG.hotel = readNumberOrDefault('set-hotel', DEFAULT_CONFIG.hotel);
+  CONFIG.tree = readNumberOrDefault('set-tree', DEFAULT_CONFIG.tree);
+  
+  localStorage.setItem('treesy_config', JSON.stringify(CONFIG));
+  closeSettings();
+  recalculate();
+}
+
+function resetSettings() {
+  CONFIG = { ...DEFAULT_CONFIG };
+  localStorage.removeItem('treesy_config');
+  initAdminSettings();
+  saveSettings();
+}
 
 // ─────────────────────────────────────────────
 // STATE
@@ -145,23 +106,74 @@ function haversine(lat1, lon1, lat2, lon2) {
 }
 
 // ─────────────────────────────────────────────
-// LOOKUP CITY (fuzzy prefix match)
+// AUTOCOMPLETE AND FETCH LOCATIONS
 // ─────────────────────────────────────────────
-function lookupCity(input) {
-  if (!input) return null;
-  const key = input.trim().toLowerCase();
-  if (CITIES[key]) return CITIES[key];
-  for (const [k, v] of Object.entries(CITIES)) {
-    if (k.startsWith(key) || v.name.toLowerCase().startsWith(key)) return v;
+let debounceTimer;
+async function fetchLocations(query, dropdownEl, segmentIdx, fieldType) {
+  if (!query || query.length < 2) {
+    dropdownEl.classList.remove('active');
+    return;
   }
-  return null;
+  
+  try {
+    const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=5&language=en&format=json`);
+    const data = await res.json();
+    
+    if (data.results && data.results.length > 0) {
+      dropdownEl.innerHTML = data.results.map(loc => `
+        <div class="autocomplete-item" onclick="selectLocation(${segmentIdx}, '${fieldType}', '${loc.name.replace(/'/g, "\\'")}', ${loc.latitude}, ${loc.longitude}, '${(loc.admin1 ? (loc.admin1.replace(/'/g, "\\'") + ', ') : '') + loc.country.replace(/'/g, "\\'")}')">
+          <div class="item-main">${loc.name}</div>
+          <div class="item-sub">${(loc.admin1 ? loc.admin1 + ', ' : '') + loc.country}</div>
+        </div>
+      `).join('');
+      dropdownEl.classList.add('active');
+    } else {
+      dropdownEl.innerHTML = `<div class="autocomplete-item"><div class="item-sub">No results found</div></div>`;
+      dropdownEl.classList.add('active');
+    }
+  } catch (e) {
+    console.error(e);
+  }
 }
+
+function onLocationInput(inputEl, segmentIdx, fieldType) {
+  const dropdownEl = inputEl.nextElementSibling;
+  
+  segments[segmentIdx][fieldType + 'Lat'] = null;
+  segments[segmentIdx][fieldType + 'Lon'] = null;
+  segments[segmentIdx][fieldType + 'Name'] = inputEl.value;
+  recalculate();
+
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => {
+    fetchLocations(inputEl.value, dropdownEl, segmentIdx, fieldType);
+  }, 300);
+}
+
+function selectLocation(segmentIdx, fieldType, name, lat, lon, sub) {
+  segments[segmentIdx][fieldType + 'Name'] = name + (sub ? ` (${sub.split(',').pop().trim()})` : '');
+  segments[segmentIdx][fieldType + 'Lat'] = lat;
+  segments[segmentIdx][fieldType + 'Lon'] = lon;
+  
+  // Close any open dropdowns
+  document.querySelectorAll('.autocomplete-dropdown').forEach(d => d.classList.remove('active'));
+  
+  renderSegments();
+  recalculate();
+}
+
+// Close dropdowns when clicking outside
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.autocomplete-wrapper')) {
+    document.querySelectorAll('.autocomplete-dropdown').forEach(d => d.classList.remove('active'));
+  }
+});
 
 // ─────────────────────────────────────────────
 // SEGMENT MANAGEMENT
 // ─────────────────────────────────────────────
 function addSegment() {
-  segments.push({ from: "", to: "", mode: "flight", stayNights: 0 });
+  segments.push({ fromName: "", fromLat: null, fromLon: null, toName: "", toLat: null, toLon: null, mode: "flight", stayNights: 0 });
   renderSegments();
   recalculate();
 }
@@ -191,19 +203,21 @@ function renderSegments() {
     .map(
       (seg, i) => `
     <div class="segment" data-index="${i}">
-      <div class="field-group">
+      <div class="field-group autocomplete-wrapper">
         <label>From</label>
         <input type="text" placeholder="e.g. Copenhagen"
-               value="${seg.from}"
-               oninput="updateSegment(${i}, 'from', this.value)"
-               list="city-list" autocomplete="off">
+               value="${seg.fromName}"
+               oninput="onLocationInput(this, ${i}, 'from')"
+               autocomplete="off">
+        <div class="autocomplete-dropdown"></div>
       </div>
-      <div class="field-group">
+      <div class="field-group autocomplete-wrapper">
         <label>To</label>
         <input type="text" placeholder="e.g. Nairobi"
-               value="${seg.to}"
-               oninput="updateSegment(${i}, 'to', this.value)"
-               list="city-list" autocomplete="off">
+               value="${seg.toName}"
+               oninput="onLocationInput(this, ${i}, 'to')"
+               autocomplete="off">
+        <div class="autocomplete-dropdown"></div>
       </div>
       <div class="field-group">
         <label>Transport</label>
@@ -234,60 +248,86 @@ function renderSegments() {
 // ─────────────────────────────────────────────
 function recalculate() {
   let totalCO2 = 0;
+  let flightsCO2 = 0;
+  let accommodationCO2 = 0;
+  let groundCO2 = 0;
   const breakdownRows = [];
   let hasValidSegment = false;
 
   segments.forEach((seg, i) => {
-    const fromCity = lookupCity(seg.from);
-    const toCity = lookupCity(seg.to);
-
     let transportCO2 = 0;
     let stayCO2 = 0;
     let distance = 0;
+    let formula = [];
 
-    if (fromCity && toCity) {
-      distance = haversine(fromCity.lat, fromCity.lon, toCity.lat, toCity.lon);
+    if (seg.fromLat && seg.fromLon && seg.toLat && seg.toLon) {
+      distance = haversine(seg.fromLat, seg.fromLon, seg.toLat, seg.toLon);
 
       // Flight routing multiplier (great-circle × 1.1)
       const effectiveDistance =
         seg.mode === "flight" ? distance * 1.1 : distance;
 
       let factor;
+      let factorLabel;
       if (seg.mode === "flight") {
         factor =
           distance < 1500
-            ? EMISSION_FACTORS.flight_short
-            : EMISSION_FACTORS.flight_long;
+            ? CONFIG.flight_short
+            : CONFIG.flight_long;
+        factorLabel = distance < 1500 ? "short-haul" : "long-haul";
       } else {
-        factor = EMISSION_FACTORS[seg.mode] || 0;
+        factor = CONFIG[seg.mode] || 0;
+        factorLabel = seg.mode;
       }
 
       transportCO2 = effectiveDistance * factor;
+      if (seg.mode === "flight") {
+        flightsCO2 += transportCO2;
+      } else {
+        groundCO2 += transportCO2;
+      }
+
+      // Build transport formula
+      const distStr = Math.round(distance).toLocaleString();
+      if (seg.mode === "flight") {
+        formula.push(`${distStr} km × 1.1 × ${factor} kg/km = ${Math.round(transportCO2).toLocaleString()} kg`);
+      } else {
+        formula.push(`${distStr} km × ${factor} kg/km = ${Math.round(transportCO2).toLocaleString()} kg`);
+      }
+
       hasValidSegment = true;
     }
 
-    stayCO2 = (seg.stayNights || 0) * HOTEL_CO2_PER_NIGHT;
+    stayCO2 = (seg.stayNights || 0) * CONFIG.hotel;
+    accommodationCO2 += stayCO2;
+
+    // Build stay formula
+    if (seg.stayNights > 0) {
+      formula.push(`${seg.stayNights} night${seg.stayNights > 1 ? "s" : ""} × ${CONFIG.hotel} kg/night = ${Math.round(stayCO2).toLocaleString()} kg`);
+    }
 
     const segmentTotal = transportCO2 + stayCO2;
     totalCO2 += segmentTotal;
 
-    if (fromCity && toCity) {
+    if (seg.fromLat && seg.fromLon && seg.toLat && seg.toLon) {
       breakdownRows.push({
-        label: `${fromCity.name} → ${toCity.name}`,
+        label: `${seg.fromName} → ${seg.toName}`,
         type: TRANSPORT_MODES[seg.mode]?.emoji || "—",
         distance: Math.round(distance),
         transportCO2: Math.round(transportCO2),
         stayCO2: Math.round(stayCO2),
         total: Math.round(segmentTotal),
+        formula: formula,
       });
     } else if (seg.stayNights > 0) {
       breakdownRows.push({
-        label: `${seg.from || "?"} → ${seg.to || "?"}`,
+        label: `${seg.fromName || "?"} → ${seg.toName || "?"}`,
         type: "🏨",
         distance: "—",
         transportCO2: 0,
         stayCO2: Math.round(stayCO2),
         total: Math.round(stayCO2),
+        formula: formula,
       });
       hasValidSegment = true;
     }
@@ -315,6 +355,7 @@ function recalculate() {
       <td>${r.label}</td>
       <td>${r.type}${r.stayCO2 > 0 ? " + 🏨" : ""}</td>
       <td>${typeof r.distance === "number" ? r.distance.toLocaleString() + " km" : r.distance}</td>
+      <td class="formula-cell">${r.formula.map(f => `<div class="formula-line">${f}</div>`).join("")}</td>
       <td class="co2-cell">${r.total.toLocaleString()} kg</td>
     </tr>
   `,
@@ -328,8 +369,19 @@ function recalculate() {
   document.getElementById("total-kg").textContent =
     Math.round(totalCO2).toLocaleString();
 
+  // Category breakdown (does not affect calculations)
+  const fmtKg = (v) => `${Math.round(v).toLocaleString()} kg CO₂e`;
+  const elFlights = document.getElementById("cat-flights");
+  const elAccommodation = document.getElementById("cat-accommodation");
+  const elGround = document.getElementById("cat-ground");
+  const elTotal = document.getElementById("cat-total");
+  if (elFlights) elFlights.textContent = fmtKg(flightsCO2);
+  if (elAccommodation) elAccommodation.textContent = fmtKg(accommodationCO2);
+  if (elGround) elGround.textContent = fmtKg(groundCO2);
+  if (elTotal) elTotal.innerHTML = `<strong>${fmtKg(totalCO2)}</strong>`;
+
   const offsetCO2 = totalCO2 * (offsetPercent / 100);
-  const trees = Math.ceil(offsetCO2 / CO2_PER_TREE);
+  const trees = Math.ceil(offsetCO2 / CONFIG.tree);
 
   document.getElementById("total-trees").textContent = trees.toLocaleString();
 
@@ -409,10 +461,8 @@ function copySummary() {
   summary += `${"─".repeat(44)}\n\n`;
 
   segments.forEach((seg, i) => {
-    const fromCity = lookupCity(seg.from);
-    const toCity = lookupCity(seg.to);
-    const from = fromCity?.name || seg.from || "?";
-    const to = toCity?.name || seg.to || "?";
+    const from = seg.fromName || "?";
+    const to = seg.toName || "?";
     const mode = TRANSPORT_MODES[seg.mode]?.label || seg.mode;
     summary += `${i + 1}. ${from} → ${to} (${mode})`;
     if (seg.stayNights > 0)
@@ -444,40 +494,22 @@ function copySummary() {
 }
 
 // ─────────────────────────────────────────────
-// DATALIST FOR CITY AUTOCOMPLETE
-// ─────────────────────────────────────────────
-function createDatalist() {
-  const dl = document.createElement("datalist");
-  dl.id = "city-list";
-  const seen = new Set();
-  Object.values(CITIES).forEach((c) => {
-    if (!seen.has(c.name)) {
-      const opt = document.createElement("option");
-      opt.value = c.name;
-      dl.appendChild(opt);
-      seen.add(c.name);
-    }
-  });
-  document.body.appendChild(dl);
-}
-
-// ─────────────────────────────────────────────
 // INITIALIZATION
 // ─────────────────────────────────────────────
 function init() {
-  createDatalist();
+  loadConfig();
 
   // Pre-load Charlie's example trip
   segments = [
-    { from: "Copenhagen", to: "Nairobi", mode: "flight", stayNights: 4 },
-    { from: "Nairobi", to: "Kilimanjaro (JRO)", mode: "flight", stayNights: 2 },
+    { fromName: "Copenhagen", fromLat: 55.6761, fromLon: 12.5683, toName: "Nairobi", toLat: -1.2921, toLon: 36.8219, mode: "flight", stayNights: 4 },
+    { fromName: "Nairobi", fromLat: -1.2921, fromLon: 36.8219, toName: "Kilimanjaro", toLat: -3.4294, toLon: 37.0742, mode: "flight", stayNights: 2 },
     {
-      from: "Kilimanjaro (JRO)",
-      to: "Dar es Salaam",
+      fromName: "Kilimanjaro", fromLat: -3.4294, fromLon: 37.0742,
+      toName: "Dar es Salaam", toLat: -6.7924, toLon: 39.2083,
       mode: "bus",
       stayNights: 4,
     },
-    { from: "Dar es Salaam", to: "Copenhagen", mode: "flight", stayNights: 0 },
+    { fromName: "Dar es Salaam", fromLat: -6.7924, fromLon: 39.2083, toName: "Copenhagen", toLat: 55.6761, toLon: 12.5683, mode: "flight", stayNights: 0 },
   ];
 
   renderSegments();
@@ -486,3 +518,44 @@ function init() {
 }
 
 init();
+
+// ─────────────────────────────────────────────
+// METHODOLOGY TOGGLE
+// ─────────────────────────────────────────────
+function toggleMethodology() {
+  const btn = document.getElementById("methodology-toggle");
+  const content = document.getElementById("methodology-content");
+  if (!btn || !content) return;
+
+  const isOpen = btn.getAttribute("aria-expanded") === "true";
+  btn.setAttribute("aria-expanded", (!isOpen).toString());
+
+  // Smooth open/close without external libs
+  if (isOpen) {
+    content.style.maxHeight = content.scrollHeight + "px";
+    content.hidden = false;
+    requestAnimationFrame(() => {
+      content.style.maxHeight = "0px";
+    });
+    const onEnd = (e) => {
+      if (e.propertyName !== "max-height") return;
+      content.hidden = true;
+      content.style.maxHeight = "";
+      content.removeEventListener("transitionend", onEnd);
+    };
+    content.addEventListener("transitionend", onEnd);
+  } else {
+    content.hidden = false;
+    content.style.maxHeight = "0px";
+    requestAnimationFrame(() => {
+      content.style.maxHeight = content.scrollHeight + "px";
+    });
+    const onEnd = (e) => {
+      if (e.propertyName !== "max-height") return;
+      // Keep an explicit max-height so CSS doesn't collapse it back to 0
+      content.style.maxHeight = content.scrollHeight + "px";
+      content.removeEventListener("transitionend", onEnd);
+    };
+    content.addEventListener("transitionend", onEnd);
+  }
+}

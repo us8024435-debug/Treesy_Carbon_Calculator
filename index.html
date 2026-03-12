@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Treesy — Travel CO₂ Offset Calculator</title>
 <meta name="description" content="Calculate your trip's carbon footprint and offset it with Treesy trees. A simple tool for travel agencies.">
+<link rel="icon" type="image/jpeg" href="treesy.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
@@ -47,6 +48,7 @@
           <th>Segment</th>
           <th>Type</th>
           <th>Distance</th>
+          <th>Calculation</th>
           <th style="text-align:right">CO₂</th>
         </tr>
       </thead>
@@ -71,6 +73,30 @@
         <div class="result-unit">via Treesy</div>
         <div id="carbon-badge"></div>
       </div>
+    </div>
+
+    <div class="results-breakdown" aria-label="Results breakdown by category">
+      <div class="results-breakdown-title">Breakdown by category</div>
+      <table class="results-breakdown-table" role="table" aria-label="Emissions breakdown table">
+        <tbody>
+          <tr>
+            <td class="cat">✈️ Flights</td>
+            <td class="val" id="cat-flights">0 kg CO₂e</td>
+          </tr>
+          <tr>
+            <td class="cat">🏨 Accommodation</td>
+            <td class="val" id="cat-accommodation">0 kg CO₂e</td>
+          </tr>
+          <tr>
+            <td class="cat">🚌 Ground Transport</td>
+            <td class="val" id="cat-ground">0 kg CO₂e</td>
+          </tr>
+          <tr class="total">
+            <td class="cat"><strong>Total</strong></td>
+            <td class="val" id="cat-total"><strong>0 kg CO₂e</strong></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <div class="trees-visual" id="trees-visual"></div>
@@ -119,28 +145,118 @@
         📋 Copy Summary to Clipboard
       </button>
     </div>
+
+    <div class="methodology-panel" id="methodology-panel" aria-label="Methodology">
+      <button class="methodology-toggle" id="methodology-toggle" type="button" onclick="toggleMethodology()"
+              aria-expanded="false" aria-controls="methodology-content">
+        <span>📐 Methodology</span>
+        <span class="chev" aria-hidden="true">▾</span>
+      </button>
+
+      <div class="methodology-content" id="methodology-content" hidden>
+        <div class="methodology-section">
+          <h3>✈️ Flight Emissions</h3>
+          <div class="methodology-block">
+            <div class="kicker"><strong>Formula:</strong></div>
+            <div class="formula">Flight emissions (kg CO₂e) = distance × 1.1 × 0.195</div>
+            <div class="kicker"><strong>Where:</strong></div>
+            <ul>
+              <li><code>distance</code> = great-circle distance between airports (shortest path on Earth)</li>
+              <li><code>1.1</code> = detour factor (adds 10% for indirect routing, holding patterns, ATC paths)</li>
+              <li><code>0.195 kg/km</code> = average climate impact per passenger-km (includes fuel burn, occupancy, NOx, contrails at altitude)</li>
+            </ul>
+            <div class="source"><em>Aligned with: DEFRA GHG Conversion Factors, ICAO aviation methodology, IPCC aviation research.</em></div>
+          </div>
+        </div>
+
+        <div class="methodology-section">
+          <h3>🏨 Accommodation Emissions</h3>
+          <div class="methodology-block">
+            <div class="kicker"><strong>Formula:</strong></div>
+            <div class="formula">Hotel emissions (kg CO₂e) = nights × 30.9</div>
+            <div class="kicker"><strong>Where:</strong></div>
+            <ul>
+              <li><code>30.9 kg CO₂e per night</code> = estimated global average per hotel guest night (electricity, AC, laundry, food services, general operations)</li>
+            </ul>
+            <div class="source"><em>Informed by: Cornell Hotel Sustainability Benchmark, global hospitality emissions studies.</em></div>
+          </div>
+        </div>
+
+        <div class="methodology-section">
+          <h3>🚌 Ground Transport Emissions</h3>
+          <div class="methodology-block">
+            <div class="kicker"><strong>Formula:</strong></div>
+            <div class="formula">Transport emissions (kg CO₂e) = distance × 0.089</div>
+            <div class="kicker"><strong>Where:</strong></div>
+            <ul>
+              <li><code>0.089 kg/km</code> = estimated emissions per passenger-km for shared vehicle transport (vans, minibuses, tour vehicles)</li>
+            </ul>
+            <div class="source"><em>Consistent with: IPCC and DEFRA international transport emission datasets.</em></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ═══ FOOTER ═══ -->
   <footer class="footer">
-    <details class="methodology">
-      <summary>📐 Methodology & Sources</summary>
-      <br>
-      <strong>Transport emission factors</strong> (kg CO₂ per passenger-km):<br>
-      • Flight (short-haul &lt; 1,500 km): 0.255 — DEFRA 2023<br>
-      • Flight (long-haul ≥ 1,500 km): 0.195 — DEFRA 2023<br>
-      • Bus / Coach: 0.089 — European Environment Agency<br>
-      • Car (avg. occupancy): 0.171 — EPA / DEFRA<br>
-      • Train: 0.041 — European Environment Agency<br>
-      • Ferry: 0.019 — DEFRA 2023<br><br>
-      <strong>Hotel/accommodation</strong>: 30.9 kg CO₂ per night — Cornell Hotel Sustainability Benchmarking<br><br>
-      <strong>Tree sequestration</strong>: 1 tree ≈ 100 kg CO₂ over its lifetime — Based on average tropical tree planting sequestration estimates<br><br>
-      <strong>Distance calculation</strong>: Haversine formula using city center coordinates<br><br>
-      <em>These are approximate values for quick estimation. Actual emissions vary based on aircraft type, vehicle efficiency, occupancy, accommodation standards, and other factors.</em>
-    </details>
     <p style="margin-top:16px;">Powered by <a href="#">Treesy</a> · Plant Trees, Offset Carbon</p>
+    <button class="btn-settings" onclick="openSettings()">⚙️ Admin Settings</button>
   </footer>
 
+</div>
+
+<!-- ═══ ADMIN SETTINGS MODAL ═══ -->
+<div class="modal-overlay" id="settings-modal" style="display: none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>⚙️ Admin Settings (Math Engine)</h2>
+      <button class="btn-close" onclick="closeSettings()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-desc">Configure the emission factors used for calculations. Changes are saved to your browser.</p>
+      
+      <div class="settings-grid">
+        <div class="settings-group">
+          <label>Flight (Short-haul, &lt;1500km) kg/km</label>
+          <input type="number" id="set-flight-short" step="0.001">
+        </div>
+        <div class="settings-group">
+          <label>Flight (Long-haul, ≥1500km) kg/km</label>
+          <input type="number" id="set-flight-long" step="0.001">
+        </div>
+        <div class="settings-group">
+          <label>Bus kg/km</label>
+          <input type="number" id="set-bus" step="0.001">
+        </div>
+        <div class="settings-group">
+          <label>Car kg/km</label>
+          <input type="number" id="set-car" step="0.001">
+        </div>
+        <div class="settings-group">
+          <label>Train kg/km</label>
+          <input type="number" id="set-train" step="0.001">
+        </div>
+        <div class="settings-group">
+          <label>Ferry kg/km</label>
+          <input type="number" id="set-ferry" step="0.001">
+        </div>
+        <div class="settings-group">
+          <label>Hotel (kg CO₂ per night)</label>
+          <input type="number" id="set-hotel" step="0.1">
+        </div>
+        <div class="settings-group">
+          <label>CO₂ Offset per Tree (kg)</label>
+          <input type="number" id="set-tree" step="1">
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-reset" onclick="resetSettings()">Reset Defaults</button>
+        <button class="btn-save" onclick="saveSettings()">Save Changes</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script src="light-pillar.js"></script>
