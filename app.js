@@ -417,7 +417,7 @@ function recalculate() {
     .join("");
 
   document.getElementById("breakdown-total").innerHTML =
-    `<span>Total Emissions</span><span>${Math.round(totalCO2).toLocaleString()} kg CO₂</span>`;
+    `<span>Total Emissions</span><span>${Math.round(totalCO2).toLocaleString()} kg CO₂e</span>`;
 
   // Result tiles
   document.getElementById("total-kg").textContent =
@@ -525,7 +525,7 @@ function copySummary() {
     summary += `\n`;
   });
 
-  summary += `\n📊 Total emissions: ${totalKg} kg CO₂\n`;
+  summary += `\n📊 Total emissions: ${totalKg} kg CO₂e\n`;
   summary += `🌳 Offset: ${offsetPercent}% = ${trees} trees via Treesy\n`;
 
   if (offsetPercent > 100) {
