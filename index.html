@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Treesy — Travel CO₂ Offset Calculator</title>
 <meta name="description" content="Calculate your trip's carbon footprint and offset it with Treesy trees. A simple tool for travel agencies.">
-<link rel="icon" type="image/jpeg" href="treesy.jpg">
+<link rel="icon" type="image/jpeg" href="TREESY.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
@@ -35,25 +35,31 @@
     <div class="card-title"><span class="icon">✈️</span> Journey Segments</div>
     <div class="segments-list" id="segments-list"></div>
     <button class="btn-add" id="btn-add-segment" onclick="addSegment()">
-      <span>＋</span> Add Segment
+      <div class="border-gradient-bottom"></div>
+      <div class="border-gradient-top"></div>
+      <div class="btn-add-inner">
+        <span>＋</span> Add Segment
+      </div>
     </button>
   </div>
 
   <!-- ═══ EMISSIONS BREAKDOWN ═══ -->
   <div class="card" id="breakdown-card" style="display: none;">
     <div class="card-title"><span class="icon">📊</span> Emissions Breakdown</div>
-    <table class="breakdown-table" id="breakdown-table">
-      <thead>
-        <tr>
-          <th>Segment</th>
-          <th>Type</th>
-          <th>Distance</th>
-          <th>Calculation</th>
-          <th style="text-align:right">CO₂</th>
-        </tr>
-      </thead>
-      <tbody id="breakdown-body"></tbody>
-    </table>
+    <div class="table-responsive">
+      <table class="breakdown-table" id="breakdown-table">
+        <thead>
+          <tr>
+            <th>Segment</th>
+            <th>Type</th>
+            <th>Distance</th>
+            <th>Calculation</th>
+            <th style="text-align:right">CO₂</th>
+          </tr>
+        </thead>
+        <tbody id="breakdown-body"></tbody>
+      </table>
+    </div>
     <div class="breakdown-total" id="breakdown-total"></div>
   </div>
 
@@ -158,12 +164,19 @@
           <h3>✈️ Flight Emissions</h3>
           <div class="methodology-block">
             <div class="kicker"><strong>Formula:</strong></div>
-            <div class="formula">Flight emissions (kg CO₂e) = distance × 1.1 × 0.195</div>
+            <div class="formula">Flight emissions (kg CO₂e) = distance × 1.1 × emission factor</div>
             <div class="kicker"><strong>Where:</strong></div>
             <ul>
               <li><code>distance</code> = great-circle distance between airports (shortest path on Earth)</li>
               <li><code>1.1</code> = detour factor (adds 10% for indirect routing, holding patterns, ATC paths)</li>
-              <li><code>0.195 kg/km</code> = average climate impact per passenger-km (includes fuel burn, occupancy, NOx, contrails at altitude)</li>
+              <li><strong>Emission factors by flight type:</strong>
+                <ul>
+                  <li><code>Domestic (&lt;500 km)</code>: 0.255 kg/km</li>
+                  <li><code>Short-haul (500–3,700 km)</code>: 0.156 kg/km</li>
+                  <li><code>Long-haul (&gt;3,700 km)</code>: 0.150 kg/km</li>
+                </ul>
+              </li>
+              <li>Factors represent average climate impact per passenger-km (includes fuel burn, occupancy, NOx, contrails at altitude)</li>
             </ul>
             <div class="source"><em>Aligned with: DEFRA GHG Conversion Factors, ICAO aviation methodology, IPCC aviation research.</em></div>
           </div>
@@ -176,7 +189,7 @@
             <div class="formula">Hotel emissions (kg CO₂e) = nights × 30.9</div>
             <div class="kicker"><strong>Where:</strong></div>
             <ul>
-              <li><code>30.9 kg CO₂e per night</code> = estimated global average per hotel guest night (electricity, AC, laundry, food services, general operations)</li>
+              <li><code>30.9 kg CO₂e per night</code> = estimated average derived from Cornell Hotel Sustainability Benchmark data and related hospitality emission studies.</li>
             </ul>
             <div class="source"><em>Informed by: Cornell Hotel Sustainability Benchmark, global hospitality emissions studies.</em></div>
           </div>
@@ -207,10 +220,10 @@
 </div>
 
 <!-- ═══ ADMIN SETTINGS MODAL ═══ -->
-<div class="modal-overlay" id="settings-modal" style="display: none;">
+<div class="modal-overlay" id="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title" style="display: none;">
   <div class="modal-content">
     <div class="modal-header">
-      <h2>⚙️ Admin Settings (Math Engine)</h2>
+      <h2 id="settings-modal-title">⚙️ Admin Settings (Math Engine)</h2>
       <button class="btn-close" onclick="closeSettings()">✕</button>
     </div>
     <div class="modal-body">
@@ -218,36 +231,40 @@
       
       <div class="settings-grid">
         <div class="settings-group">
-          <label>Flight (Short-haul, &lt;1500km) kg/km</label>
-          <input type="number" id="set-flight-short" step="0.001">
+          <label>Flight (Domestic, &lt;500km) kg/km</label>
+          <input type="number" id="set-flight-domestic" step="0.001" min="0">
         </div>
         <div class="settings-group">
-          <label>Flight (Long-haul, ≥1500km) kg/km</label>
-          <input type="number" id="set-flight-long" step="0.001">
+          <label>Flight (Short-haul, 500–3,700km) kg/km</label>
+          <input type="number" id="set-flight-short" step="0.001" min="0">
+        </div>
+        <div class="settings-group">
+          <label>Flight (Long-haul, &gt;3,700km) kg/km</label>
+          <input type="number" id="set-flight-long" step="0.001" min="0">
         </div>
         <div class="settings-group">
           <label>Bus kg/km</label>
-          <input type="number" id="set-bus" step="0.001">
+          <input type="number" id="set-bus" step="0.001" min="0">
         </div>
         <div class="settings-group">
           <label>Car kg/km</label>
-          <input type="number" id="set-car" step="0.001">
+          <input type="number" id="set-car" step="0.001" min="0">
         </div>
         <div class="settings-group">
           <label>Train kg/km</label>
-          <input type="number" id="set-train" step="0.001">
+          <input type="number" id="set-train" step="0.001" min="0">
         </div>
         <div class="settings-group">
           <label>Ferry kg/km</label>
-          <input type="number" id="set-ferry" step="0.001">
+          <input type="number" id="set-ferry" step="0.001" min="0">
         </div>
         <div class="settings-group">
           <label>Hotel (kg CO₂ per night)</label>
-          <input type="number" id="set-hotel" step="0.1">
+          <input type="number" id="set-hotel" step="0.1" min="0">
         </div>
         <div class="settings-group">
           <label>CO₂ Offset per Tree (kg)</label>
-          <input type="number" id="set-tree" step="1">
+          <input type="number" id="set-tree" step="1" min="1">
         </div>
       </div>
 

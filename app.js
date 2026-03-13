@@ -13,9 +13,32 @@ const TRANSPORT_MODES = {
   ferry: { label: "⛴️  Ferry", emoji: "⛴️" },
 };
 
+// ─────────────────────────────────────────────
+// UTILITY: HTML escape for safe text rendering
+// ─────────────────────────────────────────────
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function haversine(lat1, lon1, lat2, lon2) {
+  const toRad = (v) => (v * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const R = 6371; // Earth radius in km
+  return R * c;
+}
+
 const DEFAULT_CONFIG = {
-  flight_short: 0.255, // < 1500 km
-  flight_long: 0.195, // >= 1500 km
+  flight_domestic: 0.255, // < 500 km
+  flight_short: 0.156,    // 500–3,700 km
+  flight_long: 0.150,     // > 3,700 km
   bus: 0.089,
   car: 0.171,
   train: 0.041,
@@ -36,6 +59,7 @@ function loadConfig() {
 }
 
 function initAdminSettings() {
+  document.getElementById('set-flight-domestic').value = CONFIG.flight_domestic;
   document.getElementById('set-flight-short').value = CONFIG.flight_short;
   document.getElementById('set-flight-long').value = CONFIG.flight_long;
   document.getElementById('set-bus').value = CONFIG.bus;
@@ -63,6 +87,7 @@ function saveSettings() {
   };
 
   // Allow valid 0 values (do not use `||`).
+  CONFIG.flight_domestic = readNumberOrDefault('set-flight-domestic', DEFAULT_CONFIG.flight_domestic);
   CONFIG.flight_short = readNumberOrDefault('set-flight-short', DEFAULT_CONFIG.flight_short);
   CONFIG.flight_long = readNumberOrDefault('set-flight-long', DEFAULT_CONFIG.flight_long);
   CONFIG.bus = readNumberOrDefault('set-bus', DEFAULT_CONFIG.bus);
@@ -70,7 +95,8 @@ function saveSettings() {
   CONFIG.train = readNumberOrDefault('set-train', DEFAULT_CONFIG.train);
   CONFIG.ferry = readNumberOrDefault('set-ferry', DEFAULT_CONFIG.ferry);
   CONFIG.hotel = readNumberOrDefault('set-hotel', DEFAULT_CONFIG.hotel);
-  CONFIG.tree = readNumberOrDefault('set-tree', DEFAULT_CONFIG.tree);
+  CONFIG.tree = Math.max(1, readNumberOrDefault('set-tree', DEFAULT_CONFIG.tree));
+  document.getElementById('set-tree').value = CONFIG.tree;
   
   localStorage.setItem('treesy_config', JSON.stringify(CONFIG));
   closeSettings();
@@ -90,25 +116,7 @@ function resetSettings() {
 let segments = [];
 let offsetPercent = 100;
 
-// ─────────────────────────────────────────────
-// HAVERSINE DISTANCE (km)
-// ─────────────────────────────────────────────
-function haversine(lat1, lon1, lat2, lon2) {
-  const R = 6371;
-  const dLat = ((lat2 - lat1) * Math.PI) / 180;
-  const dLon = ((lon2 - lon1) * Math.PI) / 180;
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLon / 2) ** 2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
-
-// ─────────────────────────────────────────────
-// AUTOCOMPLETE AND FETCH LOCATIONS
-// ─────────────────────────────────────────────
-let debounceTimer;
+const debounceTimers = new Map();
 async function fetchLocations(query, dropdownEl, segmentIdx, fieldType) {
   if (!query || query.length < 2) {
     dropdownEl.classList.remove('active');
@@ -117,22 +125,57 @@ async function fetchLocations(query, dropdownEl, segmentIdx, fieldType) {
   
   try {
     const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=5&language=en&format=json`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     
+    dropdownEl.innerHTML = '';
+
     if (data.results && data.results.length > 0) {
-      dropdownEl.innerHTML = data.results.map(loc => `
-        <div class="autocomplete-item" onclick="selectLocation(${segmentIdx}, '${fieldType}', '${loc.name.replace(/'/g, "\\'")}', ${loc.latitude}, ${loc.longitude}, '${(loc.admin1 ? (loc.admin1.replace(/'/g, "\\'") + ', ') : '') + loc.country.replace(/'/g, "\\'")}')">
-          <div class="item-main">${loc.name}</div>
-          <div class="item-sub">${(loc.admin1 ? loc.admin1 + ', ' : '') + loc.country}</div>
-        </div>
-      `).join('');
+      data.results.forEach(loc => {
+        const item = document.createElement('div');
+        item.className = 'autocomplete-item';
+
+        const mainEl = document.createElement('div');
+        mainEl.className = 'item-main';
+        mainEl.textContent = loc.name;
+
+        const subText = (loc.admin1 ? loc.admin1 + ', ' : '') + loc.country;
+        const subEl = document.createElement('div');
+        subEl.className = 'item-sub';
+        subEl.textContent = subText;
+
+        item.appendChild(mainEl);
+        item.appendChild(subEl);
+
+        item.addEventListener('click', () => {
+          selectLocation(segmentIdx, fieldType, loc.name, loc.latitude, loc.longitude, subText);
+        });
+
+        dropdownEl.appendChild(item);
+      });
       dropdownEl.classList.add('active');
     } else {
-      dropdownEl.innerHTML = `<div class="autocomplete-item"><div class="item-sub">No results found</div></div>`;
+      const emptyItem = document.createElement('div');
+      emptyItem.className = 'autocomplete-item';
+      const emptySub = document.createElement('div');
+      emptySub.className = 'item-sub';
+      emptySub.textContent = 'No results found';
+      emptyItem.appendChild(emptySub);
+      dropdownEl.appendChild(emptyItem);
       dropdownEl.classList.add('active');
     }
   } catch (e) {
     console.error(e);
+    dropdownEl.innerHTML = '';
+    const errItem = document.createElement('div');
+    errItem.className = 'autocomplete-item';
+    const errSub = document.createElement('div');
+    errSub.className = 'item-sub';
+    errSub.style.color = '#f87171';
+    errSub.textContent = '⚠️ Network error — check your connection';
+    errItem.appendChild(errSub);
+    dropdownEl.appendChild(errItem);
+    dropdownEl.classList.add('active');
   }
 }
 
@@ -144,14 +187,16 @@ function onLocationInput(inputEl, segmentIdx, fieldType) {
   segments[segmentIdx][fieldType + 'Name'] = inputEl.value;
   recalculate();
 
-  clearTimeout(debounceTimer);
-  debounceTimer = setTimeout(() => {
+  const timerKey = segmentIdx + '-' + fieldType;
+  clearTimeout(debounceTimers.get(timerKey));
+  debounceTimers.set(timerKey, setTimeout(() => {
     fetchLocations(inputEl.value, dropdownEl, segmentIdx, fieldType);
-  }, 300);
+  }, 300));
 }
 
 function selectLocation(segmentIdx, fieldType, name, lat, lon, sub) {
-  segments[segmentIdx][fieldType + 'Name'] = name + (sub ? ` (${sub.split(',').pop().trim()})` : '');
+  const country = sub ? sub.split(',').pop().trim() : '';
+  segments[segmentIdx][fieldType + 'Name'] = name + (country ? ` (${country})` : '');
   segments[segmentIdx][fieldType + 'Lat'] = lat;
   segments[segmentIdx][fieldType + 'Lon'] = lon;
   
@@ -160,6 +205,7 @@ function selectLocation(segmentIdx, fieldType, name, lat, lon, sub) {
   
   renderSegments();
   recalculate();
+  saveSegments();
 }
 
 // Close dropdowns when clicking outside
@@ -176,12 +222,14 @@ function addSegment() {
   segments.push({ fromName: "", fromLat: null, fromLon: null, toName: "", toLat: null, toLon: null, mode: "flight", stayNights: 0 });
   renderSegments();
   recalculate();
+  saveSegments();
 }
 
 function removeSegment(idx) {
   segments.splice(idx, 1);
   renderSegments();
   recalculate();
+  saveSegments();
 }
 
 function updateSegment(idx, field, value) {
@@ -191,6 +239,7 @@ function updateSegment(idx, field, value) {
     segments[idx][field] = value;
   }
   recalculate();
+  saveSegments();
 }
 
 // ─────────────────────────────────────────────
@@ -206,7 +255,7 @@ function renderSegments() {
       <div class="field-group autocomplete-wrapper">
         <label>From</label>
         <input type="text" placeholder="e.g. Copenhagen"
-               value="${seg.fromName}"
+               value="${escapeHtml(seg.fromName)}"
                oninput="onLocationInput(this, ${i}, 'from')"
                autocomplete="off">
         <div class="autocomplete-dropdown"></div>
@@ -214,7 +263,7 @@ function renderSegments() {
       <div class="field-group autocomplete-wrapper">
         <label>To</label>
         <input type="text" placeholder="e.g. Nairobi"
-               value="${seg.toName}"
+               value="${escapeHtml(seg.toName)}"
                oninput="onLocationInput(this, ${i}, 'to')"
                autocomplete="off">
         <div class="autocomplete-dropdown"></div>
@@ -270,11 +319,16 @@ function recalculate() {
       let factor;
       let factorLabel;
       if (seg.mode === "flight") {
-        factor =
-          distance < 1500
-            ? CONFIG.flight_short
-            : CONFIG.flight_long;
-        factorLabel = distance < 1500 ? "short-haul" : "long-haul";
+        if (distance < 500) {
+          factor = CONFIG.flight_domestic;
+          factorLabel = "Domestic";
+        } else if (distance <= 3700) {
+          factor = CONFIG.flight_short;
+          factorLabel = "Short-haul";
+        } else {
+          factor = CONFIG.flight_long;
+          factorLabel = "Long-haul";
+        }
       } else {
         factor = CONFIG[seg.mode] || 0;
         factorLabel = seg.mode;
@@ -290,7 +344,7 @@ function recalculate() {
       // Build transport formula
       const distStr = Math.round(distance).toLocaleString();
       if (seg.mode === "flight") {
-        formula.push(`${distStr} km × 1.1 × ${factor} kg/km = ${Math.round(transportCO2).toLocaleString()} kg`);
+        formula.push(`${factorLabel}: ${distStr} km × 1.1 × ${factor} kg/km = ${Math.round(transportCO2).toLocaleString()} kg`);
       } else {
         formula.push(`${distStr} km × ${factor} kg/km = ${Math.round(transportCO2).toLocaleString()} kg`);
       }
@@ -381,7 +435,8 @@ function recalculate() {
   if (elTotal) elTotal.innerHTML = `<strong>${fmtKg(totalCO2)}</strong>`;
 
   const offsetCO2 = totalCO2 * (offsetPercent / 100);
-  const trees = Math.ceil(offsetCO2 / CONFIG.tree);
+  const treeFactor = Math.max(1, CONFIG.tree);
+  const trees = Math.ceil(offsetCO2 / treeFactor);
 
   document.getElementById("total-trees").textContent = trees.toLocaleString();
 
@@ -494,23 +549,48 @@ function copySummary() {
 }
 
 // ─────────────────────────────────────────────
+// SEGMENT PERSISTENCE
+// ─────────────────────────────────────────────
+function saveSegments() {
+  try {
+    localStorage.setItem('treesy_segments', JSON.stringify(segments));
+  } catch (e) { /* quota exceeded or private mode */ }
+}
+
+function loadSegments() {
+  const saved = localStorage.getItem('treesy_segments');
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    } catch (e) {}
+  }
+  return null;
+}
+
+// ─────────────────────────────────────────────
 // INITIALIZATION
 // ─────────────────────────────────────────────
 function init() {
   loadConfig();
 
-  // Pre-load Charlie's example trip
-  segments = [
-    { fromName: "Copenhagen", fromLat: 55.6761, fromLon: 12.5683, toName: "Nairobi", toLat: -1.2921, toLon: 36.8219, mode: "flight", stayNights: 4 },
-    { fromName: "Nairobi", fromLat: -1.2921, fromLon: 36.8219, toName: "Kilimanjaro", toLat: -3.4294, toLon: 37.0742, mode: "flight", stayNights: 2 },
-    {
-      fromName: "Kilimanjaro", fromLat: -3.4294, fromLon: 37.0742,
-      toName: "Dar es Salaam", toLat: -6.7924, toLon: 39.2083,
-      mode: "bus",
-      stayNights: 4,
-    },
-    { fromName: "Dar es Salaam", fromLat: -6.7924, fromLon: 39.2083, toName: "Copenhagen", toLat: 55.6761, toLon: 12.5683, mode: "flight", stayNights: 0 },
-  ];
+  // Load saved segments, or fall back to demo trip
+  const saved = loadSegments();
+  if (saved) {
+    segments = saved;
+  } else {
+    segments = [
+      { fromName: "Copenhagen", fromLat: 55.6761, fromLon: 12.5683, toName: "Nairobi", toLat: -1.2921, toLon: 36.8219, mode: "flight", stayNights: 4 },
+      { fromName: "Nairobi", fromLat: -1.2921, fromLon: 36.8219, toName: "Kilimanjaro", toLat: -3.4294, toLon: 37.0742, mode: "flight", stayNights: 2 },
+      {
+        fromName: "Kilimanjaro", fromLat: -3.4294, fromLon: 37.0742,
+        toName: "Dar es Salaam", toLat: -6.7924, toLon: 39.2083,
+        mode: "bus",
+        stayNights: 4,
+      },
+      { fromName: "Dar es Salaam", fromLat: -6.7924, fromLon: 39.2083, toName: "Copenhagen", toLat: 55.6761, toLon: 12.5683, mode: "flight", stayNights: 0 },
+    ];
+  }
 
   renderSegments();
   syncOffsetUI();
