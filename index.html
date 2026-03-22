@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Treesy — Travel CO₂ Offset Calculator</title>
+<title>Treesy — Travel CO₂e Offset Calculator</title>
 <meta name="description" content="Calculate your trip's carbon footprint and offset it with Treesy trees. A simple tool for travel agencies.">
 <link rel="icon" type="image/jpeg" href="TREESY.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,10 +23,9 @@
   <!-- ═══ HEADER ═══ -->
   <header class="header">
     <div class="logo">
-      <div class="logo-icon">🌳</div>
-      <span class="logo-text">Treesy</span>
+      <img src="TREESY LOGO BG.png" alt="Treesy Logo" style="height: 60px; object-fit: contain;">
     </div>
-    <h1>Travel CO₂ Offset Calculator</h1>
+    <h1>Travel CO₂e Offset Calculator</h1>
     <p>Estimate your trip's carbon footprint and offset with trees</p>
   </header>
 
@@ -54,7 +53,7 @@
             <th>Type</th>
             <th>Distance</th>
             <th>Calculation</th>
-            <th style="text-align:right">CO₂</th>
+            <th style="text-align:right">CO₂e</th>
           </tr>
         </thead>
         <tbody id="breakdown-body"></tbody>
@@ -71,7 +70,7 @@
       <div class="result-tile">
         <div class="result-label">Total Emissions</div>
         <div class="result-value" id="total-kg">0</div>
-        <div class="result-unit">kg CO₂</div>
+        <div class="result-unit">kg CO₂e</div>
       </div>
       <div class="result-tile highlight">
         <div class="result-label">Trees to Plant</div>
@@ -160,6 +159,7 @@
       </button>
 
       <div class="methodology-content" id="methodology-content" hidden>
+
         <div class="methodology-section">
           <h3>✈️ Flight Emissions</h3>
           <div class="methodology-block">
@@ -196,15 +196,27 @@
         </div>
 
         <div class="methodology-section">
-          <h3>🚌 Ground Transport Emissions</h3>
+          <h3>🚌 Bus / Shared Transport Emissions</h3>
           <div class="methodology-block">
             <div class="kicker"><strong>Formula:</strong></div>
-            <div class="formula">Transport emissions (kg CO₂e) = distance × 0.089</div>
+            <div class="formula">Bus emissions (kg CO₂e) = distance × 0.089 kg/km</div>
             <div class="kicker"><strong>Where:</strong></div>
             <ul>
-              <li><code>0.089 kg/km</code> = estimated emissions per passenger-km for shared vehicle transport (vans, minibuses, tour vehicles)</li>
+              <li><code>0.089 kg CO₂e per passenger-km</code> = average emissions for shared vehicle transport (vans, minibuses, tour buses).</li>
             </ul>
             <div class="source"><em>Consistent with: IPCC and DEFRA international transport emission datasets.</em></div>
+          </div>
+        </div>
+
+        <div class="methodology-section">
+          <h3>🚗 Passenger Car Emissions</h3>
+          <div class="methodology-block">
+            <p style="margin-top: 0; margin-bottom: 0; color: var(--text-muted); line-height: 1.5;">Car emissions are calculated by multiplying the total distance traveled (km) by an emission factor of 0.171 kg CO₂e per km. This factor represents the average emissions of a standard passenger vehicle including fuel combustion and associated greenhouse gases.</p>
+            <div class="kicker"><strong>Formula:</strong></div>
+            <div class="formula">CO₂e (kg) = Distance (km) × 0.171</div>
+            <div class="kicker"><strong>Example:</strong></div>
+            <div class="formula">A 500 km car journey = 500 × 0.171 = 85.5 kg CO₂e</div>
+            <div class="source"><em>Source: DEFRA/EEA.</em></div>
           </div>
         </div>
       </div>
@@ -259,11 +271,11 @@
           <input type="number" id="set-ferry" step="0.001" min="0">
         </div>
         <div class="settings-group">
-          <label>Hotel (kg CO₂ per night)</label>
+          <label>Hotel (kg CO₂e per night)</label>
           <input type="number" id="set-hotel" step="0.1" min="0">
         </div>
         <div class="settings-group">
-          <label>CO₂ Offset per Tree (kg)</label>
+          <label>CO₂e Offset per Tree (kg)</label>
           <input type="number" id="set-tree" step="1" min="1">
         </div>
       </div>

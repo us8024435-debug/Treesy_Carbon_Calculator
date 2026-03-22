@@ -1,2 +1,13 @@
-# Local helper files
-__read.js
+# Local helper files and logs
+*.log
+*.resolved
+
+# Dependency directories
+node_modules/
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env

@@ -1113,6 +1113,15 @@ input[type="range"]::-moz-range-thumb {
     font-size: 28px;
   }
 
+  /* Disable horizontal table scroll for stacked cards on small screens */
+  .table-responsive {
+    overflow-x: visible;
+  }
+
+  .breakdown-table {
+    min-width: 0;
+  }
+
   /* Breakdown table → stacked cards */
   .breakdown-table thead {
     display: none;
@@ -1152,7 +1161,7 @@ input[type="range"]::-moz-range-thumb {
   .breakdown-table td:nth-child(2)::before { content: "Type"; }
   .breakdown-table td:nth-child(3)::before { content: "Distance"; }
   .breakdown-table td:nth-child(4)::before { content: "Formula"; }
-  .breakdown-table td:nth-child(5)::before { content: "CO₂"; }
+  .breakdown-table td:nth-child(5)::before { content: "CO₂e"; }
 
   .breakdown-table .co2-cell {
     text-align: left;

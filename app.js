@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════
-// TREESY — Travel CO₂ Offset Calculator
+// TREESY — Travel CO₂e Offset Calculator
 // ═══════════════════════════════════════════════
 
 // ─────────────────────────────────────────────
@@ -344,9 +344,9 @@ function recalculate() {
       // Build transport formula
       const distStr = Math.round(distance).toLocaleString();
       if (seg.mode === "flight") {
-        formula.push(`${factorLabel}: ${distStr} km × 1.1 × ${factor} kg/km = ${Math.round(transportCO2).toLocaleString()} kg`);
+        formula.push(`${factorLabel}: ${distStr} km × 1.1 × ${factor} kg/km = ${Math.round(transportCO2).toLocaleString()} kg CO₂e`);
       } else {
-        formula.push(`${distStr} km × ${factor} kg/km = ${Math.round(transportCO2).toLocaleString()} kg`);
+        formula.push(`${distStr} km × ${factor} kg/km = ${Math.round(transportCO2).toLocaleString()} kg CO₂e`);
       }
 
       hasValidSegment = true;
@@ -357,7 +357,7 @@ function recalculate() {
 
     // Build stay formula
     if (seg.stayNights > 0) {
-      formula.push(`${seg.stayNights} night${seg.stayNights > 1 ? "s" : ""} × ${CONFIG.hotel} kg/night = ${Math.round(stayCO2).toLocaleString()} kg`);
+      formula.push(`${seg.stayNights} night${seg.stayNights > 1 ? "s" : ""} × ${CONFIG.hotel} kg/night = ${Math.round(stayCO2).toLocaleString()} kg CO₂e`);
     }
 
     const segmentTotal = transportCO2 + stayCO2;
@@ -406,11 +406,11 @@ function recalculate() {
     .map(
       (r) => `
     <tr>
-      <td>${r.label}</td>
+      <td>${escapeHtml(r.label)}</td>
       <td>${r.type}${r.stayCO2 > 0 ? " + 🏨" : ""}</td>
       <td>${typeof r.distance === "number" ? r.distance.toLocaleString() + " km" : r.distance}</td>
-      <td class="formula-cell">${r.formula.map(f => `<div class="formula-line">${f}</div>`).join("")}</td>
-      <td class="co2-cell">${r.total.toLocaleString()} kg</td>
+      <td class="formula-cell">${r.formula.map(f => `<div class="formula-line">${escapeHtml(f)}</div>`).join("")}</td>
+      <td class="co2-cell">${r.total.toLocaleString()} kg CO₂e</td>
     </tr>
   `,
     )
@@ -512,7 +512,7 @@ function copySummary() {
   const totalKg = document.getElementById("total-kg").textContent;
   const trees = document.getElementById("total-trees").textContent;
 
-  let summary = `🌍 Travel CO₂ Offset Summary — Treesy\n`;
+  let summary = `🌍 Travel CO₂e Offset Summary — Treesy\n`;
   summary += `${"─".repeat(44)}\n\n`;
 
   segments.forEach((seg, i) => {
