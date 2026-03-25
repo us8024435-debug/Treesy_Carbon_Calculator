@@ -185,7 +185,11 @@ function onLocationInput(inputEl, segmentIdx, fieldType) {
   segments[segmentIdx][fieldType + 'Lat'] = null;
   segments[segmentIdx][fieldType + 'Lon'] = null;
   segments[segmentIdx][fieldType + 'Name'] = inputEl.value;
+  segments[segmentIdx].error = null;
   recalculate();
+
+  const errEl = inputEl.closest('.segment').querySelector('.segment-error');
+  if (errEl) errEl.remove();
 
   const timerKey = segmentIdx + '-' + fieldType;
   clearTimeout(debounceTimers.get(timerKey));
@@ -196,9 +200,16 @@ function onLocationInput(inputEl, segmentIdx, fieldType) {
 
 function selectLocation(segmentIdx, fieldType, name, lat, lon, sub) {
   const country = sub ? sub.split(',').pop().trim() : '';
-  segments[segmentIdx][fieldType + 'Name'] = name + (country ? ` (${country})` : '');
-  segments[segmentIdx][fieldType + 'Lat'] = lat;
-  segments[segmentIdx][fieldType + 'Lon'] = lon;
+  const seg = segments[segmentIdx];
+  seg[fieldType + 'Name'] = name + (country ? ` (${country})` : '');
+  seg[fieldType + 'Lat'] = lat;
+  seg[fieldType + 'Lon'] = lon;
+  
+  if (seg.fromLat && seg.toLat && seg.fromLat === seg.toLat && seg.fromLon === seg.toLon) {
+    seg.error = "Origin and destination cannot be the same";
+  } else {
+    seg.error = null;
+  }
   
   // Close any open dropdowns
   document.querySelectorAll('.autocomplete-dropdown').forEach(d => d.classList.remove('active'));
@@ -286,6 +297,7 @@ function renderSegments() {
                oninput="updateSegment(${i}, 'stayNights', this.value)">
       </div>
       <button class="btn-remove" onclick="removeSegment(${i})" title="Remove segment">✕</button>
+      ${seg.error ? `<div class="segment-error" style="color: #f87171; font-size: 13px; margin-top: 10px; width: 100%; flex-basis: 100%;">${escapeHtml(seg.error)}</div>` : ''}
     </div>
   `,
     )
@@ -304,6 +316,8 @@ function recalculate() {
   let hasValidSegment = false;
 
   segments.forEach((seg, i) => {
+    if (seg.error) return;
+
     let transportCO2 = 0;
     let stayCO2 = 0;
     let distance = 0;
