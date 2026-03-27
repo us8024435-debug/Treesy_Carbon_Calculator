@@ -1,0 +1,31 @@
+[build]
+  publish = "."
+
+# All assets are in root — no build command needed for a static site
+
+# Cache headers for static assets
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.jpg"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# SPA-style fallback (optional, useful if expanding later)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

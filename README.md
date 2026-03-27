@@ -24,13 +24,51 @@ cd treesy-calculator
 # Open the index.html file in your preferred web browser
 ```
 
+## 🛠 Tech Stack
+- **HTML5** — Semantic structure
+- **CSS3** — Glassmorphism UI with CSS variables and animations
+- **Vanilla JavaScript** — Zero-dependency calculation engine
+- **Three.js** (CDN) — WebGL light pillar background effect
+- **jsPDF** (CDN) — Client-side PDF report generation
+- **QRCode.js** (CDN) — QR code generation for PDF reports
+
+## 📁 Project Structure
+```
+TREESY/
+├── index.html          # Main application page
+├── app.js              # Calculation engine & state management
+├── styles.css          # Design system & responsive layout
+├── light-pillar.js     # Three.js background effect
+├── TREESY LOGO BG.png  # Logo with background
+├── TREESY_LOGO.png     # White logo for PDF headers
+├── TREESY.jpg          # Favicon
+├── netlify.toml        # Netlify deployment configuration
+├── .gitignore          # Git ignore rules
+└── README.md           # This file
+```
+
+## 🚀 Deploy to Netlify
+1. Push this repo to GitHub (see below).
+2. Go to [app.netlify.com](https://app.netlify.com/) and click **"Add new site" → "Import an existing project"**.
+3. Connect your GitHub account and select this repository.
+4. Netlify will auto-detect the `netlify.toml` config — no build command is needed.
+5. Click **Deploy site**. Your calculator will be live in seconds.
+
+## 📤 Publish to GitHub
+```bash
+# If starting fresh (no remote yet):
+git remote add origin https://github.com/YOUR_USERNAME/treesy-calculator.git
+
+# Stage, commit, and push:
+git add -A
+git commit -m "Ready for deployment"
+git branch -M main
+git push -u origin main
+```
+> Replace `YOUR_USERNAME` with your actual GitHub username.
+
 ## 📐 Methodology
-The emissions logic is fully documented inside the application UI under the **"📐 Methodology"** accordion. It dynamically handles the differences between short-haul vs long-haul flights, applying appropriate global detour multipliers. 
+The emissions logic is fully documented inside the application UI under the **"📐 Methodology"** accordion. It dynamically handles differences between short-haul vs long-haul flights, applying appropriate global detour multipliers.
 
-## 🌐 Deployment
-This project is inherently deployment-ready for any static file hosting platform:
-- [Netlify](https://www.netlify.com/)
-- [Vercel](https://vercel.com/)
-- [GitHub Pages](https://pages.github.com/)
-
-Simply connect your Git repository to your hosting provider's dashboard to automatically publish the site.
+## 📄 License
+This project is proprietary to **Treesy** ([treesy.dk](https://treesy.dk)). All rights reserved.

@@ -11,3 +11,13 @@ Thumbs.db
 
 # Environment variables
 .env
+
+# IDE / editor configs
+.vscode/
+.idea/
+
+# Netlify local cache
+.netlify/
+
+# Temporary helper scripts
+fix_logo.js
